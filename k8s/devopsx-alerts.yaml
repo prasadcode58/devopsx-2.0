@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: devopsx-alerts
+  namespace: monitoring
+  labels:
+    release: monitoring
+spec:
+  groups:
+    - name: devopsx.rules
+      rules:
+        - alert: DevOpsXApplicationReplicasLow
+          expr: kube_deployment_status_replicas_available{namespace="default",deployment="devopsx-app"} < 2
+          for: 1m
+          labels:
+            severity: warning
+          annotations:
+            summary: DevOpsX application replicas are below the desired count
+            description: "The devopsx-app deployment has fewer than 2 available replicas."
